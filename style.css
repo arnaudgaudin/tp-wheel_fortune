@@ -1,0 +1,74 @@
+:root {
+    --box-width: 40px;
+    --box-height: 60px;
+
+    --boxes-cols: 14;
+    --boxes-width: calc(var(--box-width) * var(--boxes-cols));
+}
+
+.wheelfortune {
+    background-color: #999;
+    width: var(--boxes-width);
+}
+
+.wheelfortune .boxes {
+    display: grid;
+    width: 100%;
+    background-color: #eee;
+    grid-template-columns: repeat(var(--boxes-cols), var(--box-width));
+    grid-template-rows: repeat(4, var(--box-height));
+}
+
+.wheelfortune .boxes .box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+.wheelfortune .boxes .box:nth-child(odd) {
+    background-color: #aaa;
+
+}
+.wheelfortune .boxes .box:nth-child(even) {
+    background-color: #bbb;
+}
+
+.wheelfortune .boxes .box:after {
+    position: absolute;
+    background-color: #666;
+    color: #fff;
+    top: 0;
+    left: 0;
+    font-size: .7rem;
+    padding: .15rem;
+    content: attr(data-number);
+}
+
+/* Premier élément décalé */
+.wheelfortune .boxes .box:nth-child(1) {
+    grid-column-start: 2;
+}
+
+/* 2e rangée : éléments 13 à 26 = 14 cases */
+.wheelfortune .boxes .box:nth-child(n+13):nth-child(-n+26) {
+    grid-row: 2;
+}
+
+/* 3e rangée : éléments 27 à 40 = 14 cases */
+.wheelfortune .boxes .box:nth-child(n+27):nth-child(-n+40) {
+    grid-row: 3;
+}
+
+/* Décalage 4e rangée */
+.wheelfortune .boxes .box:nth-child(41) {
+    grid-column-start: 2;
+}
+
+.wheelfortune .alphabet {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(13, 1fr);
+}
