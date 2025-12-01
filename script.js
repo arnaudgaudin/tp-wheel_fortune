@@ -139,8 +139,8 @@ const initGame = () => {
   //on s'en servira ensuite pour éliminer les lettres cliquées par l'alphabet
   wordsMerged = words.join('');
 
-  //calcul du nombre d'essai en fonction du nombre de lettres différentes
-  guessMax = new Set(wordsMerged).size;
+  //calcul du nombre d'essai en fonction du nombre de lettres différentes multiplié par 1.5
+  guessMax = Math.ceil((new Set(wordsMerged).size) * 1.5);
 
   //mise à jour de l'affichage des essais
   handleTryAgain();
@@ -243,7 +243,6 @@ const letterBtnsActivation = (active = true) => {
 const letterChosen = (event) => {
   const letterNode = event.target;
   const letter = letterNode.dataset.letter;
-  console.log('letterChosen', letter);
   
   //ajout de la classe active à la lettre
   letterNode.classList.add('active');
@@ -280,10 +279,6 @@ const handleLetterGuess = () => {
   //nombre de lettre restant à trouver dans les mots
   const remainingLetters = wordsMerged.length;
 
-  console.log('handleLetterGuess', guessMax);
-  console.log('wordsMerged', wordsMerged);
-  console.log('remainingLetters', remainingLetters);
-
   //s'il ne reste plus d'essai et qu'il reste des lettres à deviner => on a perdu
   if(guessMax === 0 && remainingLetters > 0) {
     //on dispatch l'événement perdu
@@ -303,8 +298,6 @@ const handleLetterGuess = () => {
 
 //fonction déclenchée quand la partie est perdue
 const handleLosing = () => {
-  console.log('handleLosing');
-
   //ajout d'un texte de défaite
   resultHelper.textContent = "Désolé ! Vous avez perdu !";
 
@@ -314,8 +307,6 @@ const handleLosing = () => {
 
 //fonction déclenchée quand la partie est gagnée
 const handleWinning = () => {
-  console.log('handleWinning');
-
   //ajout d'un texte de victoire
   resultHelper.textContent = "Félicitations ! Vous avez gagné !";
 
@@ -325,8 +316,6 @@ const handleWinning = () => {
 
 //fonction déclenchée quand la partie est toujours en cours
 const handleTryAgain = () => {
-  console.log('handleTryAgain', guessMax);
-
   //mise à jour du nombre d'essais restant
   resultHelper.textContent = `Il vous reste ${guessMax} essai(s)...`;
 }
