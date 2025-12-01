@@ -231,6 +231,7 @@ const letterBtnsActivation = (active = true) => {
     if(active) {
       //gestion des événements sur tous les boutons
       letterBtn.addEventListener('click', letterClick);
+      letterBtn.disabled = false;
     } else {
       //suppression écouteur d'événement et désactivation bouton
       letterBtn.removeEventListener('click', letterClick);
