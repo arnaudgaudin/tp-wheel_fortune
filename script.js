@@ -127,6 +127,7 @@ const letterBtns = alphabetContainer.querySelectorAll('button');
 //sélection des éléments d'affichage
 const
   resultHelper =  wheelfortune.querySelector('.scoring .result'),
+  solutionBtn =  wheelfortune.querySelector('.scoring .solution button.solution-btn'),
   resetBtn =  wheelfortune.querySelector('.scoring .reset button.reset-btn');
 
 //initialisation de la partie
@@ -217,6 +218,10 @@ const initGame = () => {
   //gestion des événements sur tous les boutons
   letterBtnsActivation();
 
+  //désactivation des boutons solution et reset
+  solutionBtn.disabled = true;
+  resetBtn.disabled = true;
+
   //gestion des événement globaux sur le jeu
   wheelfortune.addEventListener('letterGuess', handleLetterGuess);
   wheelfortune.addEventListener('youLose', handleLosing);
@@ -271,6 +276,13 @@ const letterClick = (event) => {
   wheelfortune.dispatchEvent(new Event("letterGuess"));
 }
 
+//fonction permettant d'afficher la solution
+const showSolution = () => {
+  boxesContainer.querySelectorAll('.box[data-letter]').forEach((box) => {
+    box.classList.add('active');
+  });
+}
+
 //fonction déclenchée à chaque essai pour deviner une lettre
 const handleLetterGuess = () => {
   //on décrémente le nombre d'essai autorisés
@@ -301,6 +313,12 @@ const handleLosing = () => {
   //ajout d'un texte de défaite
   resultHelper.textContent = "Désolé ! Vous avez perdu !";
 
+  //activation du bouton d'affichage de la solution
+  solutionBtn.disabled = false;
+
+  //activation du bouton reset
+  resetBtn.disabled = false;
+
   //désactivation de tous les boutons
   letterBtnsActivation(false);
 }
@@ -309,6 +327,9 @@ const handleLosing = () => {
 const handleWinning = () => {
   //ajout d'un texte de victoire
   resultHelper.textContent = "Félicitations ! Vous avez gagné !";
+
+  //activation du bouton reset
+  resetBtn.disabled = false;
 
   //désactivation de tous les boutons
   letterBtnsActivation(false);
@@ -324,3 +345,6 @@ initGame();
 
 //ajout écouteur d'événement sur le bouton de réinitialisation
 resetBtn.addEventListener('click', initGame);
+
+//ajout écouteur d'événelent sur le bouton de solution
+solutionBtn.addEventListener('click', showSolution);
