@@ -108,6 +108,9 @@ const wordGroups = [
 //jeu de donnée sélectionné (initialisé ici pour accès global)
 let wordsMerged = "";
 
+//nombre d'essai autorisés (dépendant du nombre de lettres à trouver)
+let guessMax = 0;
+
 //sélection globale du jeu
 const wheelfortune = document.getElementById('wheelfortune');
 
@@ -130,6 +133,9 @@ const initGame = () => {
   //on mélange les mots en une seule strings et on l'affecte à la variable globale
   //on s'en servira ensuite pour éliminer les lettres cliquées par l'alphabet
   wordsMerged = words.join('');
+
+  //calcul du nombre d'essai en fonction du nombre de lettres différentes
+  guessMax = new Set(wordsMerged).size;
 
   //configuration des lignes
   const rows = [
@@ -197,12 +203,27 @@ const initGame = () => {
   });
 
   //gestion des événements sur tous les boutons
-  letterBtns.forEach((letterBtn) => {
-    letterBtn.addEventListener('click', letterClick);
-  });
+  letterBtnsActivation();
 
   //gestion des événement globaux sur le jeu
-  wheelfortune.addEventListener('letterGuess', overallScore);
+  wheelfortune.addEventListener('letterGuess', handleLetterGuess);
+  wheelfortune.addEventListener('youLose', handleLosing);
+  wheelfortune.addEventListener('youWin', handleWinning);
+  wheelfortune.addEventListener('tryAgain', handleTryAgain);
+}
+
+//fonction pour activer/désactiver tous les boutons d'un coup
+const letterBtnsActivation = (active = true) => {
+  letterBtns.forEach((letterBtn) => {
+    if(active) {
+      //gestion des événements sur tous les boutons
+      letterBtn.addEventListener('click', letterClick);
+    } else {
+      //suppression écouteur d'événement et désactivation bouton
+      letterBtn.removeEventListener('click', letterClick);
+      letterBtn.disabled = true;
+    }
+  });
 }
 
 //fonction déclenchée sur chacune des lettres choisies
@@ -238,15 +259,54 @@ const letterClick = (event) => {
   wheelfortune.dispatchEvent(new Event("letterGuess"));
 }
 
-//fonction déclenchée à chaque essai pour suivi du score global
-const overallScore = (event) => {
-  console.log('overallScore', event);
-  
-  console.log('wordsMerged', wordsMerged);
+//fonction déclenchée à chaque essai pour deviner une lettre
+const handleLetterGuess = () => {
+  //on décrémente le nombre d'essai autorisés
+  guessMax--;
 
   //nombre de lettre restant à trouver dans les mots
   const remainingLetters = wordsMerged.length;
+
+  console.log('handleLetterGuess', guessMax);
+  console.log('wordsMerged', wordsMerged);
   console.log('remainingLetters', remainingLetters);
+
+  //s'il ne reste plus d'essai et qu'il reste des lettres à deviner => on a perdu
+  if(guessMax === 0 && remainingLetters > 0) {
+    //on dispatch l'événement perdu
+    wheelfortune.dispatchEvent(new Event("youLose"));
+  }
+  //il ne reste plus aucune lettre à deviner => on a gagné
+  else if(remainingLetters === 0) {
+    //on dispatch l'événement gagné
+    wheelfortune.dispatchEvent(new Event("youWin"));
+  }
+  // on a encore droit à quelques essais
+  else {
+    //on dispatch l'événement tryAgain
+    wheelfortune.dispatchEvent(new Event("tryAgain"));
+  }
+}
+
+//fonction déclenchée quand la partie est perdue
+const handleLosing = () => {
+  console.log('handleLosing');
+
+  //désactivation de tous les boutons
+  letterBtnsActivation(false);
+}
+
+//fonction déclenchée quand la partie est gagnée
+const handleWinning = () => {
+  console.log('handleWinning');
+
+  //désactivation de tous les boutons
+  letterBtnsActivation(false);
+}
+
+//fonction déclenchée quand la partie est toujours en cours
+const handleTryAgain = () => {
+  console.log('handleTryAgain', guessMax);
 }
 
 initGame();
