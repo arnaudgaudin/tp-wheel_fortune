@@ -215,6 +215,18 @@ const initGame = () => {
     });
   });
   
+  //ajout d'un délai (en ms) proportionnel à l'index (pour le fun)
+  const letterBoxes = boxesContainer.querySelectorAll(`.box[data-letter]`);
+  letterBoxes.forEach((box,index) => {
+    const transitionDuration = 300;
+    const transformDelay = index * 25;
+    const opacityDelay = transitionDuration + transformDelay;
+
+    box.style.setProperty('--transition-duration', `${transitionDuration}ms`);
+    box.style.setProperty('--transform-delay', `${transformDelay}ms`);
+    box.style.setProperty('--opacity-delay', `${opacityDelay}ms`);
+  });
+  
   //gestion des événements sur tous les boutons
   letterBtnsActivation();
 

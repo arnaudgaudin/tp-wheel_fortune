@@ -36,7 +36,12 @@ body {
     color: rgba(0, 0, 0, 0.8);
     /* gestion effet de retournement */
     transform-style: preserve-3d;
-    transition: transform 300ms ease-out;
+    
+    /* valeur par défaut des transitions (overridé en JS) */
+    --transition-duration: 300ms;
+    --transform-delay: 0ms;
+    --opacity-delay: var(--transition-duration);
+    transition: transform var(--transition-duration) ease-out var(--transform-delay);
 }
 
 .wheelfortune .boxes .box:before,
@@ -44,7 +49,7 @@ body {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 300ms ease-in 300ms;
+    transition: opacity var(--transition-duration) ease-out var(--opacity-delay);
 }
 
 .wheelfortune .boxes .box[data-letter]:before,
