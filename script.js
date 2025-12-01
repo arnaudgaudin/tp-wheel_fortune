@@ -124,6 +124,11 @@ const alphabetContainer = wheelfortune.querySelector('.alphabet');
 //sélection de tous les boutons à lettre
 const letterBtns = alphabetContainer.querySelectorAll('button');
 
+//sélection des éléments d'affichage
+const
+  resultHelper =  wheelfortune.querySelector('.scoring .result'),
+  resetBtn =  wheelfortune.querySelector('.scoring .reset button.reset-btn');
+
 //initialisation de la partie
 const initGame = () => {
   //sélection d'un jeu de donnée de façon aléatoire pour remplir le tableau
@@ -136,6 +141,9 @@ const initGame = () => {
 
   //calcul du nombre d'essai en fonction du nombre de lettres différentes
   guessMax = new Set(wordsMerged).size;
+
+  //mise à jour de l'affichage des essais
+  handleTryAgain();
 
   //configuration des lignes
   const rows = [
@@ -200,6 +208,11 @@ const initGame = () => {
       //incrémentation du compteur
       wordCounter++;
     });
+  });
+
+  //suppresson de toutes les classes actives sur les boites à lettres
+  boxes.forEach((box) => {
+    box.classList.remove('active');
   });
 
   //gestion des événements sur tous les boutons
@@ -292,6 +305,9 @@ const handleLetterGuess = () => {
 const handleLosing = () => {
   console.log('handleLosing');
 
+  //ajout d'un texte de défaite
+  resultHelper.textContent = "Désolé ! Vous avez perdu !";
+
   //désactivation de tous les boutons
   letterBtnsActivation(false);
 }
@@ -300,6 +316,9 @@ const handleLosing = () => {
 const handleWinning = () => {
   console.log('handleWinning');
 
+  //ajout d'un texte de victoire
+  resultHelper.textContent = "Félicitations ! Vous avez gagné !";
+
   //désactivation de tous les boutons
   letterBtnsActivation(false);
 }
@@ -307,6 +326,12 @@ const handleWinning = () => {
 //fonction déclenchée quand la partie est toujours en cours
 const handleTryAgain = () => {
   console.log('handleTryAgain', guessMax);
+
+  //mise à jour du nombre d'essais restant
+  resultHelper.textContent = `Il vous reste ${guessMax} essai(s)...`;
 }
 
 initGame();
+
+//ajout écouteur d'événement sur le bouton de réinitialisation
+resetBtn.addEventListener('click', initGame);

@@ -9,6 +9,9 @@
 .wheelfortune {
     background-color: #999;
     width: var(--boxes-width);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .wheelfortune .boxes {
@@ -76,4 +79,18 @@
     display: grid;
     width: 100%;
     grid-template-columns: repeat(13, 1fr);
+}
+
+.wheelfortune .scoring {
+    background-color: #666;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.wheelfortune .scoring .result {
+    flex: 1;
 }
