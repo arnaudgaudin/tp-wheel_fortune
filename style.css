@@ -28,6 +28,11 @@
     font-weight: bold;
     font-size: 1.8rem;
 }
+
+.wheelfortune .boxes .box.active {
+    border: 2px solid red;
+}
+
 .wheelfortune .boxes .box:nth-child(odd) {
     background-color: #aaa;
 

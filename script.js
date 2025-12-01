@@ -105,6 +105,9 @@ const wordGroups = [
   ["nuage", "ciel", "vent", "air"]
 ];
 
+//jeu de donnée sélectionné (initialisé ici pour accès global)
+let wordsMerged = "";
+
 //sélection globale du jeu
 const wheelfortune = document.getElementById('wheelfortune');
 
@@ -113,11 +116,20 @@ const boxesContainer = wheelfortune.querySelector('.boxes');
 //sélection de tous les boites
 const boxes = boxesContainer.querySelectorAll('.box');
 
+//sélection du conteneur de l'alphabet
+const alphabetContainer = wheelfortune.querySelector('.alphabet');
+//sélection de tous les boutons à lettre
+const letterBtns = alphabetContainer.querySelectorAll('button');
+
 //initialisation de la partie
 const initGame = () => {
   //sélection d'un jeu de donnée de façon aléatoire pour remplir le tableau
   const indexWords = Math.floor(Math.random() * wordGroups.length);
   const words = wordGroups[indexWords];
+
+  //on mélange les mots en une seule strings et on l'affecte à la variable globale
+  //on s'en servira ensuite pour éliminer les lettres cliquées par l'alphabet
+  wordsMerged = words.join('');
 
   //configuration des lignes
   const rows = [
@@ -163,8 +175,6 @@ const initGame = () => {
     }
   );
 
-  console.log('wordDisplay', wordDisplay);
-
   //ajout des lettres à l'interface
   let wordCounter = 0;
   wordDisplay.forEach((letters) => {
@@ -174,14 +184,69 @@ const initGame = () => {
       const box = boxes[wordCounter];
       //ajout de la lettre à l'intérieur
       box.textContent = `${letter}`;
+
+      //ajout de la lettre en tant que paramètre data pour récupération via event
+      if(letter) box.dataset.letter = letter;
+
+      //ajout d'un listener custom sur la lettre pour déclencher son apparition
+      box.addEventListener('chosen', letterChosen);
+
       //incrémentation du compteur
       wordCounter++;
     });
-
   });
 
+  //gestion des événements sur tous les boutons
+  letterBtns.forEach((letterBtn) => {
+    letterBtn.addEventListener('click', letterClick);
+  });
 
+  //gestion des événement globaux sur le jeu
+  wheelfortune.addEventListener('letterGuess', overallScore);
+}
 
+//fonction déclenchée sur chacune des lettres choisies
+const letterChosen = (event) => {
+  const letterNode = event.target;
+  const letter = letterNode.dataset.letter;
+  console.log('letterChosen', letter);
+  
+  //ajout de la classe active à la lettre
+  letterNode.classList.add('active');
+
+  //suppression de la lettre de la variable globale
+  wordsMerged = wordsMerged.replaceAll(letter, "");
+}
+
+//fonction déclenchée sur les boutons de lettre
+const letterClick = (event) => {
+  const btnNode = event.target;
+  const letter = btnNode.value;
+  //sélection de la lettre correspondante (si elle existe)
+  const letterNodes = boxesContainer.querySelectorAll(`.box[data-letter=${letter}]`);
+
+  //déclenchement événement custom sur chacune des lettres choisies
+  const eventChosen = new Event("chosen");
+  letterNodes.forEach((letterNode) => {
+    letterNode.dispatchEvent(eventChosen);
+  });
+
+  //une fois qu'un bouton a été utilisé on le désastive
+  btnNode.disabled = true;
+  
+  //déclenchement d'un événement global sur le jeu pour le suivi du score
+  wheelfortune.dispatchEvent(new Event("letterGuess"));
+}
+
+//fonction déclenchée à chaque essai pour suivi du score global
+const overallScore = (event) => {
+  console.log('overallScore', event);
+  
+  console.log('wordsMerged', wordsMerged);
+
+  //nombre de lettre restant à trouver dans les mots
+  const remainingLetters = wordsMerged.length;
+  console.log('remainingLetters', remainingLetters);
 }
 
 initGame();
