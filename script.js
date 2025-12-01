@@ -189,6 +189,12 @@ const initGame = () => {
     }
   );
 
+  //suppresson de toutes les classes actives et attributs letter
+  boxes.forEach((box) => {
+    box.classList.remove('active');
+    delete box.dataset.letter;
+  });
+
   //ajout des lettres à l'interface
   let wordCounter = 0;
   wordDisplay.forEach((letters) => {
@@ -196,8 +202,6 @@ const initGame = () => {
 
       //sélection de la box correspondante
       const box = boxes[wordCounter];
-      //ajout de la lettre à l'intérieur
-      box.textContent = `${letter}`;
 
       //ajout de la lettre en tant que paramètre data pour récupération via event
       if(letter) box.dataset.letter = letter;
@@ -209,12 +213,7 @@ const initGame = () => {
       wordCounter++;
     });
   });
-
-  //suppresson de toutes les classes actives sur les boites à lettres
-  boxes.forEach((box) => {
-    box.classList.remove('active');
-  });
-
+  
   //gestion des événements sur tous les boutons
   letterBtnsActivation();
 

@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+body {
+    font-family: "Lato", sans-serif;
+}
+
 :root {
     --box-width: 40px;
     --box-height: 60px;
@@ -12,47 +18,63 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding: 10px;
 }
 
 .wheelfortune .boxes {
     display: grid;
     width: 100%;
-    background-color: #eee;
     grid-template-columns: repeat(var(--boxes-cols), var(--box-width));
     grid-template-rows: repeat(4, var(--box-height));
 }
 
 .wheelfortune .boxes .box {
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     text-transform: uppercase;
     font-weight: bold;
     font-size: 1.8rem;
+    color: rgba(0, 0, 0, 0.8);
+    /* gestion effet de retournement */
+    transform-style: preserve-3d;
+    transition: transform 300ms ease-out;
 }
 
-.wheelfortune .boxes .box:not(.active) {
-    opacity: 0.25;
+.wheelfortune .boxes .box:before,
+.wheelfortune .boxes .box:after {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 300ms ease-in 300ms;
 }
 
-.wheelfortune .boxes .box:nth-child(odd) {
-    background-color: #aaa;
-
+.wheelfortune .boxes .box[data-letter]:before,
+.wheelfortune .boxes .box[data-letter]:after {
+    opacity: 1;
 }
-.wheelfortune .boxes .box:nth-child(even) {
-    background-color: #bbb;
+
+.wheelfortune .boxes .box:before {
+    content: "";
+    background-image: linear-gradient(-45deg, #999, #ccc);
 }
 
 .wheelfortune .boxes .box:after {
-    position: absolute;
-    background-color: #666;
-    color: #fff;
-    top: 0;
-    left: 0;
-    font-size: .7rem;
-    padding: .15rem;
-    content: attr(data-number);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    content: attr(data-letter);
+    background-image: linear-gradient(45deg, #ccc, #fff);
+    backface-visibility: hidden;
+}
+
+.wheelfortune .boxes .box:not([data-letter]) {
+    background-image: linear-gradient(45deg, #666, #888);
+}
+.wheelfortune .boxes .box:not([data-letter]):after {
+    background-image: linear-gradient(45deg, #888, #666);
+}
+
+.wheelfortune .boxes .box[data-letter]:not(.active) {
+    transform: rotateY(180deg);
 }
 
 /* Premier élément décalé */
