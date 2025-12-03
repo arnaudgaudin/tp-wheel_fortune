@@ -130,6 +130,10 @@ const
   solutionBtn =  wheelfortune.querySelector('.scoring .solution button.solution-btn'),
   resetBtn =  wheelfortune.querySelector('.scoring .reset button.reset-btn');
 
+//durée totale de transition (utilse pour délai réinitialisation)
+//calculé à l'initialisation du jeu
+let transitionTotalDuration = 0;
+
 //initialisation de la partie
 const initGame = () => {
   //sélection d'un jeu de donnée de façon aléatoire pour remplir le tableau
@@ -190,12 +194,6 @@ const initGame = () => {
     }
   );
 
-  //suppresson de toutes les classes actives et attributs letter
-  boxes.forEach((box) => {
-    box.classList.remove('active');
-    delete box.dataset.letter;
-  });
-
   //ajout des lettres à l'interface
   let wordCounter = 0;
   wordDisplay.forEach((letters) => {
@@ -217,14 +215,20 @@ const initGame = () => {
   
   //ajout d'un délai (en ms) proportionnel à l'index (pour le fun)
   const letterBoxes = boxesContainer.querySelectorAll(`.box[data-letter]`);
+  const transitionDuration = 300;
+
   letterBoxes.forEach((box,index) => {
-    const transitionDuration = 300;
     const transformDelay = index * 25;
     const opacityDelay = transitionDuration + transformDelay;
 
     box.style.setProperty('--transition-duration', `${transitionDuration}ms`);
     box.style.setProperty('--transform-delay', `${transformDelay}ms`);
     box.style.setProperty('--opacity-delay', `${opacityDelay}ms`);
+
+    //pour le dernier tour de boucle on affecte la durée durée totale de transition
+    if(index === letterBoxes.length - 1) {
+      transitionTotalDuration = opacityDelay + transitionDuration;
+    }
   });
   
   //gestion des événements sur tous les boutons
@@ -295,6 +299,22 @@ const showSolution = () => {
   });
 }
 
+//fonction permettre de remettre à zéro le jeu avant initialisation
+const resetGame = () => {
+  //suppresson de toutes les classes actives pour animation de disparition
+  boxes.forEach((box) => {
+    box.classList.remove('active');
+  });
+
+  //une fois l'animation terminée on supprime les lettres et on relance le jeu
+  setTimeout(() => {
+    boxes.forEach((box) => {
+      delete box.dataset.letter;
+    });
+    initGame();
+  }, transitionTotalDuration);
+}
+
 //fonction déclenchée à chaque essai pour deviner une lettre
 const handleLetterGuess = () => {
   //on décrémente le nombre d'essai autorisés
@@ -356,7 +376,7 @@ const handleTryAgain = () => {
 initGame();
 
 //ajout écouteur d'événement sur le bouton de réinitialisation
-resetBtn.addEventListener('click', initGame);
+resetBtn.addEventListener('click', resetGame);
 
 //ajout écouteur d'événelent sur le bouton de solution
 solutionBtn.addEventListener('click', showSolution);
